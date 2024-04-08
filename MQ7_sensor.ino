@@ -1,17 +1,27 @@
-#include <Arduino.h>
+#include "MQ7.h"
 
-#define Mq7_pin 4
+#define A_PIN 4
+#define VOLTAGE 5
 
-float CO_value;
+// init MQ7 device
+MQ7 mq7(A_PIN, VOLTAGE);
 
 void setup() {
-  Serial.begin(115200);
-  delay(2000);
-}
+	Serial.begin(115200);
+	while (!Serial) {
+		;	// wait for serial connection
+	}
 
+	Serial.println(""); 	// blank new line
+
+	Serial.println("Calibrating MQ7");
+	mq7.calibrate();		// calculates R0
+	Serial.println("Calibration done!");
+}
+ 
 void loop() {
-  CO_value = analogRead(Mq7_pin);
-  Serial.println("Carbon monoxide value: ");
-  Serial.println(CO_value);
-  delay(1000);
+	Serial.print("PPM = "); Serial.println(mq7.readPpm());
+
+	Serial.println(""); 	// blank new line
+	delay(1000);
 }
